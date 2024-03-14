@@ -1,0 +1,199 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ClassBase.Compartilha.ValidaCpf_Cnpj
+{
+   public class validaCpf_Cnpj
+    {
+       
+
+            //acrecenta zero ate o limite do digito
+            public string Cpf_Cnpj_AdicionarZeroLeft_SemValidar(string CpfCliente)
+            {
+
+                int F = Convert.ToInt32(CpfCliente.Length);
+                int Cpf = 11;
+                if (F <= Cpf)
+                {
+                    string cpf1 = CpfCliente.PadLeft(11, '0');
+
+                    return cpf1;
+                }
+                else
+                {
+                    int J = Convert.ToInt32(CpfCliente.Length);
+                    int cnpj = 14;
+                    if (J > 11 && J <= cnpj)
+                    {
+                        string cnpj1 = CpfCliente.PadLeft(14, '0');
+
+                        return cnpj1;
+
+                    }
+                }
+                return CpfCliente;
+
+
+            }
+
+            public string CnpjAcrecentaZeroEsquerda(string cnpjCredor)
+            {
+                string Retorno = "";
+                int G = Convert.ToInt32(cnpjCredor.Length);
+                int TotalCnpj = 14;
+
+                if (G < TotalCnpj)
+                {
+                    Retorno = cnpjCredor.PadLeft(14, '0');
+                }
+                return Retorno;
+            }
+
+            public string CnpjRetiraZeroDoInicio(string cnpjCredor)
+            {
+
+                string Retorno = cnpjCredor.TrimStart('0');
+                return Retorno;
+            }
+
+
+           
+            public string Cpf_Cnpj_valida_AdicionaZerosLeft(string CpfCliente)
+            {
+                string Retorno = "";
+                int F = Convert.ToInt32(CpfCliente.Length);
+                int Cpf = 11;
+                if (F <= Cpf)
+                {
+                    string cpf1 = CpfCliente.PadLeft(11, '0');
+                    if (IsCpf(cpf1))
+                    {
+                        Retorno = cpf1;
+                        return Retorno;
+                    }
+                    else
+                    {
+                        return "invalido";
+                    }
+
+                }
+                else
+                {
+                    int J = Convert.ToInt32(CpfCliente.Length);
+                    int cnpj = 14;
+                    if (J > 11 && J <= cnpj)
+                    {
+                        string cnpj1 = CpfCliente.PadLeft(14, '0');
+                        if (IsCnpj(cnpj1))
+                        {
+                            Retorno = cnpj1;
+                            return Retorno;
+                        }
+                        else
+                        {
+                            return "invalido";
+                        }
+                    }
+                }
+
+                return CpfCliente;
+            }
+
+            public bool IsValid(string cpfCnpj)
+            {
+                return (IsCpf(cpfCnpj) || IsCnpj(cpfCnpj));
+            }
+                public bool ValidaCpf(string cpfCnpj)
+                {
+                     return (IsCpf(cpfCnpj));
+                }
+                public bool ValidaCnpj(string cpfCnpj)
+                {
+                    return (IsCnpj(cpfCnpj));
+                }
+        private static bool IsCpf(string cpf)
+            {
+                int[] multiplicador1 = new int[9] { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+                int[] multiplicador2 = new int[10] { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+
+                cpf = cpf.Trim().Replace(".", "").Replace("-", "");
+                if (cpf.Length != 11)
+                    return false;
+
+                for (int j = 0; j < 10; j++)
+                    if (j.ToString().PadLeft(11, char.Parse(j.ToString())) == cpf)
+                        return false;
+
+                string tempCpf = cpf.Substring(0, 9);
+                int soma = 0;
+
+                for (int i = 0; i < 9; i++)
+                    soma += int.Parse(tempCpf[i].ToString()) * multiplicador1[i];
+
+                int resto = soma % 11;
+                if (resto < 2)
+                    resto = 0;
+                else
+                    resto = 11 - resto;
+
+                string digito = resto.ToString();
+                tempCpf = tempCpf + digito;
+                soma = 0;
+                for (int i = 0; i < 10; i++)
+                    soma += int.Parse(tempCpf[i].ToString()) * multiplicador2[i];
+
+                resto = soma % 11;
+                if (resto < 2)
+                    resto = 0;
+                else
+                    resto = 11 - resto;
+
+                digito = digito + resto.ToString();
+
+                return cpf.EndsWith(digito);
+            }
+
+            private static bool IsCnpj(string cnpj)
+            {
+                int[] multiplicador1 = new int[12] { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+                int[] multiplicador2 = new int[13] { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+
+                cnpj = cnpj.Trim().Replace(".", "").Replace("-", "").Replace("/", "");
+                if (cnpj.Length != 14)
+                    return false;
+
+                string tempCnpj = cnpj.Substring(0, 12);
+                int soma = 0;
+
+                for (int i = 0; i < 12; i++)
+                    soma += int.Parse(tempCnpj[i].ToString()) * multiplicador1[i];
+
+                int resto = (soma % 11);
+                if (resto < 2)
+                    resto = 0;
+                else
+                    resto = 11 - resto;
+
+                string digito = resto.ToString();
+                tempCnpj = tempCnpj + digito;
+                soma = 0;
+                for (int i = 0; i < 13; i++)
+                    soma += int.Parse(tempCnpj[i].ToString()) * multiplicador2[i];
+
+                resto = (soma % 11);
+                if (resto < 2)
+                    resto = 0;
+                else
+                    resto = 11 - resto;
+
+                digito = digito + resto.ToString();
+
+                return cnpj.EndsWith(digito);
+            }
+
+        
+    }
+}
